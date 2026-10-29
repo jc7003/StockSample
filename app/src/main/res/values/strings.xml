@@ -2,4 +2,6 @@
     <string name="app_name">StockSample</string>
     <string name="btn_open_stock_list">stock list</string>
     <string name="btn_open_stock_list_compose">Compose stock list</string>
+    <string name="btn_retry">重試</string>
+
 </resources>

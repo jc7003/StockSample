@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_no_network">沒有網路連線，請檢查網路後重試</string>
+    <string name="error_timeout">連線逾時，請稍後再試</string>
+    <string name="error_server">伺服器錯誤（%1$d），請稍後再試</string>
+    <string name="error_client">請求錯誤（%1$d）</string>
+    <string name="error_unknown">發生未知錯誤，請稍後再試</string>
+</resources>
