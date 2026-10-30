@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <style name="TextAppearance.Headline5" parent="TextAppearance.Material3.HeadlineSmall"/>
+
+    <style name="TextAppearance.Subtitle1" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">@dimen/text_body1</item>
+    </style>
+
+    <style name="TextAppearance.Subtitle2" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:textSize">@dimen/text_body2</item>
+    </style>
+
+    <style name="TextAppearance.Body1" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">@dimen/text_body1</item>
+    </style>
+
+    <style name="TextAppearance.Body1.Bold" >
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Body2" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">@dimen/text_body2</item>
+    </style>
+
+    <style name="TextAppearance.Body2.Bold" >
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextAppearance.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textSize">@dimen/text_caption</item>
+    </style>
+
+    <style name="TextAppearance.Caption.Bold" >
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>

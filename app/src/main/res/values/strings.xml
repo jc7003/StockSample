@@ -1,7 +1,19 @@
 <resources>
     <string name="app_name">StockSample</string>
-    <string name="btn_open_stock_list">stock list</string>
+
+    <string name="common_retry">重試</string>
+
+    <string name="stock_list_title">stock list</string>
+    <string name="stock_label_opening_price">開盤價</string>
+    <string name="stock_label_closing_price">收盤價</string>
+    <string name="stock_label_highest_price">最高價</string>
+    <string name="stock_label_lowest_price">最低價</string>
+    <string name="stock_label_change">漲跌價差</string>
+    <string name="stock_label_monthly_average_price">月平均價</string>
+    <string name="stock_label_transaction">成交筆數</string>
+    <string name="stock_label_trade_volume">成交股數</string>
+    <string name="stock_label_trade_value">成交金額</string>
+
     <string name="btn_open_stock_list_compose">Compose stock list</string>
-    <string name="btn_retry">重試</string>
 
 </resources>

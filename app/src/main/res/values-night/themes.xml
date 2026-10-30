@@ -3,5 +3,8 @@
     <style name="Base.Theme.StockSample" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+        <item name="upColor">@color/up_color_dark</item>
+        <item name="downColor">@color/down_color_dark</item>
     </style>
+
 </resources>

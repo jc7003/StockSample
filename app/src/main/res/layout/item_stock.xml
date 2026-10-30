@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.Material3.CardView.Filled"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="16dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <!-- 價格區：四欄（標籤 / 數值 / 標籤 / 數值） -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_quarter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.2" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_half"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_three_quarters"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.67" />
+
+        <!-- 成交區：三欄 -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_one_third"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.32" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/gl_two_thirds"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.67" />
+
+        <TextView
+            android:id="@+id/tv_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceLabelSmall"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="2330" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Headline5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_code"
+            tools:text="台積電" />
+
+        <!-- 第一列：開盤價 / 收盤價 -->
+        <TextView
+            android:id="@+id/tv_opening_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="8dp"
+            android:textAppearance="@style/TextAppearance.Body1.Bold"
+            app:layout_constraintEnd_toStartOf="@id/gl_half"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@id/gl_quarter"
+            app:layout_constraintTop_toBottomOf="@id/tv_name"
+            tools:text="1,050.00"
+            tools:textColor="@color/up_color" />
+
+        <TextView
+            android:id="@+id/tv_opening_price_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stock_label_opening_price"
+            android:textAppearance="@style/TextAppearance.Caption.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_opening_price"
+            app:layout_constraintEnd_toStartOf="@id/gl_quarter"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_closing_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Body1.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_opening_price"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@id/gl_three_quarters"
+            tools:text="1,060.00"
+            tools:textColor="@color/up_color" />
+
+        <TextView
+            android:id="@+id/tv_closing_price_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stock_label_closing_price"
+            android:textAppearance="@style/TextAppearance.Caption.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_opening_price"
+            app:layout_constraintEnd_toStartOf="@id/gl_three_quarters"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@id/gl_half" />
+
+        <!-- 第二列：最高價 / 最低價 -->
+        <TextView
+            android:id="@+id/tv_highest_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:textAppearance="@style/TextAppearance.Body1.Bold"
+            app:layout_constraintEnd_toStartOf="@id/gl_half"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@id/gl_quarter"
+            app:layout_constraintTop_toBottomOf="@id/tv_opening_price"
+            tools:text="1,065.00" />
+
+        <TextView
+            android:id="@+id/tv_highest_price_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stock_label_highest_price"
+            android:textAppearance="@style/TextAppearance.Caption.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_highest_price"
+            app:layout_constraintEnd_toStartOf="@id/gl_quarter"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_lowest_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Body1.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_highest_price"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@id/gl_three_quarters"
+            tools:text="1,045.00" />
+
+        <TextView
+            android:id="@+id/tv_lowest_price_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stock_label_lowest_price"
+            android:textAppearance="@style/TextAppearance.Caption.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_highest_price"
+            app:layout_constraintEnd_toStartOf="@id/gl_three_quarters"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@id/gl_half" />
+
+        <!-- 第三列：漲跌價差 / 月平均價 -->
+        <TextView
+            android:id="@+id/tv_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:textAppearance="@style/TextAppearance.Body1.Bold"
+            app:layout_constraintEnd_toStartOf="@id/gl_half"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@id/gl_quarter"
+            app:layout_constraintTop_toBottomOf="@id/tv_highest_price"
+            tools:text="10.00"
+            tools:textColor="@color/up_color" />
+
+        <TextView
+            android:id="@+id/tv_change_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stock_label_change"
+            android:textAppearance="@style/TextAppearance.Caption.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_change"
+            app:layout_constraintEnd_toStartOf="@id/gl_quarter"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_monthly_average_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Body1.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_change"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@id/gl_three_quarters"
+            tools:text="1,040.25" />
+
+        <TextView
+            android:id="@+id/tv_monthly_average_price_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stock_label_monthly_average_price"
+            android:textAppearance="@style/TextAppearance.Caption.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_change"
+            app:layout_constraintEnd_toStartOf="@id/gl_three_quarters"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@id/gl_half" />
+
+        <!-- 第四列：成交筆數 / 成交股數 / 成交金額 -->
+        <TextView
+            android:id="@+id/tv_transaction_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/stock_label_transaction"
+            android:textAppearance="@style/TextAppearance.Caption.Bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_change" />
+
+        <TextView
+            android:id="@+id/tv_transaction"
+            android:layout_width="0dp"
+            android:layout_height="18dp"
+            android:layout_marginHorizontal="4dp"
+            android:autoSizeMaxTextSize="@dimen/text_caption"
+            android:autoSizeMinTextSize="@dimen/text_overline"
+            android:autoSizeTextType="uniform"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Caption.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_transaction_label"
+            app:layout_constraintEnd_toStartOf="@id/gl_one_third"
+            app:layout_constraintStart_toEndOf="@id/tv_transaction_label"
+            tools:text="45,678" />
+
+        <TextView
+            android:id="@+id/tv_trade_volume_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stock_label_trade_volume"
+            android:textAppearance="@style/TextAppearance.Caption.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_transaction_label"
+            app:layout_constraintStart_toStartOf="@id/gl_one_third" />
+
+        <TextView
+            android:id="@+id/tv_trade_volume"
+            android:layout_width="0dp"
+            android:layout_height="18dp"
+            android:layout_marginHorizontal="4dp"
+            android:autoSizeMaxTextSize="@dimen/text_caption"
+            android:autoSizeMinTextSize="@dimen/text_overline"
+            android:autoSizeTextType="uniform"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Caption.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_transaction_label"
+            app:layout_constraintEnd_toStartOf="@id/gl_two_thirds"
+            app:layout_constraintStart_toEndOf="@id/tv_trade_volume_label"
+            tools:text="32,345,678" />
+
+        <TextView
+            android:id="@+id/tv_trade_value_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stock_label_trade_value"
+            android:textAppearance="@style/TextAppearance.Caption.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_transaction_label"
+            app:layout_constraintStart_toStartOf="@id/gl_two_thirds" />
+
+        <TextView
+            android:id="@+id/tv_trade_value"
+            android:layout_width="0dp"
+            android:layout_height="18dp"
+            android:layout_marginHorizontal="4dp"
+            android:autoSizeMaxTextSize="@dimen/text_caption"
+            android:autoSizeMinTextSize="@dimen/text_overline"
+            android:autoSizeTextType="uniform"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.Caption.Bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/tv_transaction_label"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/tv_trade_value_label"
+            tools:text="339.6 億" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>
