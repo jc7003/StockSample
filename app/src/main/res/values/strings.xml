@@ -14,6 +14,10 @@
     <string name="stock_label_trade_volume">成交股數</string>
     <string name="stock_label_trade_value">成交金額</string>
 
+    <string name="stock_sort_title">排序</string>
+    <string name="stock_sort_code_descending">依股票代號降序</string>
+    <string name="stock_sort_code_ascending">依股票代號升序</string>
+
     <string name="btn_open_stock_list_compose">Compose stock list</string>
 
 </resources>

@@ -9,6 +9,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +33,7 @@ class StockListActivity : AppCompatActivity() {
 
     private lateinit var adapter: StockListAdapter
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityStockListBinding.inflate(layoutInflater)
@@ -42,6 +44,12 @@ class StockListActivity : AppCompatActivity() {
             setSupportActionBar(toolbar)
             toolbar.setNavigationOnClickListener {
                 finish()
+            }
+            btnSort.setOnClickListener {
+                // 避免連點開出多個 bottom sheet
+                if (supportFragmentManager.findFragmentByTag(BottomDialogStockSort.TAG) == null) {
+                    BottomDialogStockSort().show(supportFragmentManager, BottomDialogStockSort.TAG)
+                }
             }
 
             swipeRefresh.setOnRefreshListener {
@@ -72,7 +80,12 @@ class StockListActivity : AppCompatActivity() {
                     if (binding.rvStock.adapter !is StockListAdapter) {
                         binding.rvStock.adapter = adapter
                     }
-                    adapter.submitList(state.stocks)
+
+                    adapter.submitList(state.stocks) {
+                        rvStock.post {
+                            rvStock.scrollToPosition(0)
+                        }
+                    }
                 }
 
                 is StockUiState.Error -> errorView.tvError.text = state.throwable.toMessage()
@@ -87,7 +100,6 @@ class StockListActivity : AppCompatActivity() {
         is ApiException.Client -> getString(R.string.error_client, code)
         else -> getString(R.string.error_unknown)
     }
-
 
     inner class StockListAdapter : ListAdapter<Stock, StockListAdapter.StockViewHolder>(
         object : DiffUtil.ItemCallback<Stock>() {
@@ -162,4 +174,8 @@ class StockListActivity : AppCompatActivity() {
         }
     }
 
+    companion object {
+        /** 切換排序後列表淡入的時間（毫秒） */
+        private const val SORT_FADE_IN_DURATION = 150L
+    }
 }

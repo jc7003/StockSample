@@ -5,10 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.owen.stocksample.stock.domain.Stock
 import com.owen.stocksample.stock.domain.StockRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,8 +22,19 @@ class StockViewModel @Inject constructor(
     private val stockRepository: StockRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<StockUiState>(StockUiState.Loading)
-    val uiState: StateFlow<StockUiState> = _uiState.asStateFlow()
+    /** API 回傳的原始資料，排序前 */
+    private val _loadState = MutableStateFlow<StockUiState>(StockUiState.Loading)
+
+    private val _sort = MutableStateFlow(StockSort.CODE_DESCENDING)
+    val sort: StateFlow<StockSort> = _sort.asStateFlow()
+
+    val uiState: StateFlow<StockUiState> = combine(_loadState, _sort) { state, sort ->
+        if (state is StockUiState.Success) {
+            StockUiState.Success(sort.sort(state.stocks))
+        } else {
+            state
+        }
+    }.flowOn(Dispatchers.Default).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), StockUiState.Loading)
 
     private var loadJob: Job? = null
 
@@ -32,11 +48,15 @@ class StockViewModel @Inject constructor(
         }
 
         loadJob = viewModelScope.launch {
-            _uiState.value = StockUiState.Loading
+            _loadState.value = StockUiState.Loading
             stockRepository.getStocks()
-                .onSuccess { _uiState.value = StockUiState.Success(it) }
-                .onFailure { _uiState.value = StockUiState.Error(it) }
+                .onSuccess { _loadState.value = StockUiState.Success(it) }
+                .onFailure { _loadState.value = StockUiState.Error(it) }
         }
+    }
+
+    fun updateSort(sort: StockSort) {
+        _sort.value = sort
     }
 }
 
