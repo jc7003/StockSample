@@ -2,6 +2,6 @@ package com.owen.stocksample.stock.domain
 
 interface StockRepository {
 
-    /** 上市個股日成交資訊 */
+    /** 取得上市個股日成交資訊，並合併月平均價。 */
     suspend fun getStocks(): Result<List<Stock>>
 }

@@ -129,7 +129,7 @@ class StockListActivity : AppCompatActivity() {
         ) : RecyclerView.ViewHolder(binding.root) {
 
             init {
-                //todo click event
+                // TODO: 點擊事件
             }
 
             fun bind(stock: Stock) {

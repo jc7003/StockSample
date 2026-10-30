@@ -4,9 +4,7 @@ import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 
-/**
- * 上市個股日成交資訊
- */
+/** 上市個股日成交資訊。 */
 @Keep
 data class StockDayDto(
     @SerializedName("Date")
@@ -34,9 +32,7 @@ data class StockDayDto(
 )
 
 
-/**
- * 上市個股日收盤價及月均價
- */
+/** 上市個股日收盤價及月均價。 */
 @Keep
 data class StockDayAvgDto(
     @SerializedName("Date")
@@ -51,9 +47,7 @@ data class StockDayAvgDto(
     val monthlyAveragePrice: String? = null,
 )
 
-/**
- * 上市個股日本益比、殖利率及股價淨值比
- */
+/** 上市個股日本益比、殖利率及股價淨值比。 */
 @Keep
 data class StockBwiBbuDto(
     @SerializedName("Date")

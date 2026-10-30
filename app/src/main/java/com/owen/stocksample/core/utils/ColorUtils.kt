@@ -7,9 +7,7 @@ import com.owen.stocksample.R
 
 object ColorUtils {
 
-    /**
-     * 依漲跌價差取得文字顏色：null 或 0 用 textColorPrimary，大於 0 用 upColor，小於用 downColor
-     * */
+    /** 依漲跌價差取得文字顏色：null 或 0 用 textColorPrimary，大於 0 用 upColor，小於 0 用 downColor。 */
     @ColorInt
     fun getChangeColor(context: Context, change: Double?): Int {
         val colorAttr = when {
