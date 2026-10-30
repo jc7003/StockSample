@@ -5,6 +5,7 @@
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
         <item name="upColor">@color/up_color_dark</item>
         <item name="downColor">@color/down_color_dark</item>
+        <item name="textColorPrimary">?android:textColorPrimary</item>
     </style>
 
 </resources>

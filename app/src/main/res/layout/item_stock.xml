@@ -13,7 +13,6 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- 價格區：四欄（標籤 / 數值 / 標籤 / 數值） -->
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_quarter"
             android:layout_width="wrap_content"
@@ -30,21 +29,6 @@
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/gl_three_quarters"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.67" />
-
-        <!-- 成交區：三欄 -->
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/gl_one_third"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.32" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/gl_two_thirds"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -84,7 +68,7 @@
             app:layout_constraintStart_toStartOf="@id/gl_quarter"
             app:layout_constraintTop_toBottomOf="@id/tv_name"
             tools:text="1,050.00"
-            tools:textColor="@color/up_color" />
+            tools:textColor="?upColor" />
 
         <TextView
             android:id="@+id/tv_opening_price_label"
@@ -107,7 +91,7 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="@id/gl_three_quarters"
             tools:text="1,060.00"
-            tools:textColor="@color/up_color" />
+            tools:textColor="?upColor" />
 
         <TextView
             android:id="@+id/tv_closing_price_label"
@@ -180,7 +164,7 @@
             app:layout_constraintStart_toStartOf="@id/gl_quarter"
             app:layout_constraintTop_toBottomOf="@id/tv_highest_price"
             tools:text="10.00"
-            tools:textColor="@color/up_color" />
+            tools:textColor="?upColor" />
 
         <TextView
             android:id="@+id/tv_change_label"
@@ -216,81 +200,105 @@
             app:layout_constraintStart_toStartOf="@id/gl_half" />
 
         <!-- 第四列：成交筆數 / 成交股數 / 成交金額 -->
-        <TextView
-            android:id="@+id/tv_transaction_label"
+        <LinearLayout
+            android:id="@+id/layout_transaction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="@string/stock_label_transaction"
-            android:textAppearance="@style/TextAppearance.Caption.Bold"
+            android:orientation="horizontal"
+            app:layout_constrainedWidth="true"
+            app:layout_constraintEnd_toStartOf="@id/layout_trade_volume"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_change" />
+            app:layout_constraintTop_toBottomOf="@id/tv_change">
 
-        <TextView
-            android:id="@+id/tv_transaction"
-            android:layout_width="0dp"
-            android:layout_height="18dp"
-            android:layout_marginHorizontal="4dp"
-            android:autoSizeMaxTextSize="@dimen/text_caption"
-            android:autoSizeMinTextSize="@dimen/text_overline"
-            android:autoSizeTextType="uniform"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.Caption.Bold"
-            app:layout_constraintBaseline_toBaselineOf="@id/tv_transaction_label"
-            app:layout_constraintEnd_toStartOf="@id/gl_one_third"
-            app:layout_constraintStart_toEndOf="@id/tv_transaction_label"
-            tools:text="45,678" />
+            <TextView
+                android:id="@+id/tv_transaction_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stock_label_transaction"
+                android:textAppearance="@style/TextAppearance.Caption.Bold" />
 
-        <TextView
-            android:id="@+id/tv_trade_volume_label"
+            <TextView
+                android:id="@+id/tv_transaction"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_marginStart="4dp"
+                android:autoSizeMaxTextSize="@dimen/text_caption"
+                android:autoSizeMinTextSize="@dimen/text_overline"
+                android:autoSizeTextType="uniform"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Caption.Bold"
+                tools:text="45,678" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_trade_volume"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stock_label_trade_volume"
-            android:textAppearance="@style/TextAppearance.Caption.Bold"
-            app:layout_constraintBaseline_toBaselineOf="@id/tv_transaction_label"
-            app:layout_constraintStart_toStartOf="@id/gl_one_third" />
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="@id/gl_half"
+            app:layout_constraintStart_toStartOf="@id/gl_half"
+            app:layout_constraintTop_toBottomOf="@id/tv_change">
 
-        <TextView
-            android:id="@+id/tv_trade_volume"
-            android:layout_width="0dp"
-            android:layout_height="18dp"
-            android:layout_marginHorizontal="4dp"
-            android:autoSizeMaxTextSize="@dimen/text_caption"
-            android:autoSizeMinTextSize="@dimen/text_overline"
-            android:autoSizeTextType="uniform"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.Caption.Bold"
-            app:layout_constraintBaseline_toBaselineOf="@id/tv_transaction_label"
-            app:layout_constraintEnd_toStartOf="@id/gl_two_thirds"
-            app:layout_constraintStart_toEndOf="@id/tv_trade_volume_label"
-            tools:text="32,345,678" />
+            <TextView
+                android:id="@+id/tv_trade_volume_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stock_label_trade_volume"
+                android:textAppearance="@style/TextAppearance.Caption.Bold" />
 
-        <TextView
-            android:id="@+id/tv_trade_value_label"
+            <TextView
+                android:id="@+id/tv_trade_volume"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_marginStart="4dp"
+                android:autoSizeMaxTextSize="@dimen/text_caption"
+                android:autoSizeMinTextSize="@dimen/text_overline"
+                android:autoSizeTextType="uniform"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Caption.Bold"
+                tools:text="32,345,678" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/layout_trade_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stock_label_trade_value"
-            android:textAppearance="@style/TextAppearance.Caption.Bold"
-            app:layout_constraintBaseline_toBaselineOf="@id/tv_transaction_label"
-            app:layout_constraintStart_toStartOf="@id/gl_two_thirds" />
-
-        <TextView
-            android:id="@+id/tv_trade_value"
-            android:layout_width="0dp"
-            android:layout_height="18dp"
-            android:layout_marginHorizontal="4dp"
-            android:autoSizeMaxTextSize="@dimen/text_caption"
-            android:autoSizeMinTextSize="@dimen/text_overline"
-            android:autoSizeTextType="uniform"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textAppearance="@style/TextAppearance.Caption.Bold"
-            app:layout_constraintBaseline_toBaselineOf="@id/tv_transaction_label"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal"
+            app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tv_trade_value_label"
-            tools:text="339.6 億" />
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@id/layout_trade_volume"
+            app:layout_constraintTop_toBottomOf="@id/tv_change">
+
+            <TextView
+                android:id="@+id/tv_trade_value_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/stock_label_trade_value"
+                android:textAppearance="@style/TextAppearance.Caption.Bold"
+                tools:text="@string/stock_label_trade_value" />
+
+            <TextView
+                android:id="@+id/tv_trade_value"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                android:layout_marginStart="4dp"
+                android:autoSizeMaxTextSize="@dimen/text_caption"
+                android:autoSizeMinTextSize="@dimen/text_overline"
+                android:autoSizeTextType="uniform"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.Caption.Bold"
+                tools:text="339.6 億" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

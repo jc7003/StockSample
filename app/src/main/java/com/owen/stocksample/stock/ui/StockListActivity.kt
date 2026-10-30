@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.owen.stocksample.R
 import com.owen.stocksample.core.network.ApiException
 import com.owen.stocksample.core.utils.ColorUtils
+import com.owen.stocksample.core.extensions.toCompactText
 import com.owen.stocksample.core.extensions.toDisplayText
 import com.owen.stocksample.databinding.ActivityStockListBinding
 import com.owen.stocksample.databinding.ItemStockBinding
@@ -141,14 +142,21 @@ class StockListActivity : AppCompatActivity() {
                     tvMonthlyAveragePrice.text = stock.monthlyAveragePrice.toDisplayText()
 
                     tvTransaction.text = stock.transaction.toDisplayText()
-                    tvTradeVolume.text = stock.tradeVolume.toDisplayText()
-                    tvTradeValue.text = stock.tradeValue.toDisplayText()
+                    tvTradeVolume.text = stock.tradeVolume.toCompactText()
+                    tvTradeValue.text = stock.tradeValue.toCompactText()
 
                     tvChange.text = stock.change.toDisplayText()
                     tvChange.setTextColor(ColorUtils.getChangeColor(root.context, stock.change))
 
-                    tvClosingPrice.text = stock.closingPrice.toDisplayText()
-                    tvClosingPrice.setTextColor(ColorUtils.getChangeColor(root.context, stock.closingPrice))
+                    val closingPrice = stock.closingPrice
+                    val monthlyAveragePrice = stock.monthlyAveragePrice
+                    val diffFromAverage = if (closingPrice != null && monthlyAveragePrice != null) {
+                        closingPrice - monthlyAveragePrice
+                    } else {
+                        null
+                    }
+                    tvClosingPrice.text = closingPrice.toDisplayText()
+                    tvClosingPrice.setTextColor(ColorUtils.getChangeColor(root.context, diffFromAverage))
                 }
             }
         }

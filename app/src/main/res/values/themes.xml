@@ -4,6 +4,7 @@
 
         <item name="upColor">@color/up_color</item>
         <item name="downColor">@color/down_color</item>
+        <item name="textColorPrimary">?android:textColorPrimary</item>
     </style>
 
     <style name="Theme.StockSample" parent="Base.Theme.StockSample" />
