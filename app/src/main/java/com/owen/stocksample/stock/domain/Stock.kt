@@ -20,4 +20,10 @@ data class Stock(
     val monthlyAveragePrice: Double?,
     /** 成交筆數 */
     val transaction: Long?,
+    /** 本益比 */
+    val peRatio: String? = "",
+    /** 殖利率 */
+    val dividendYield: String? = "",
+    /** 股價淨值比 */
+    val pbRatio: String? = "",
 )

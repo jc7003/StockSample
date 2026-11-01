@@ -2,6 +2,7 @@
     <string name="app_name">StockSample</string>
 
     <string name="common_retry">重試</string>
+    <string name="common_confirm">確定</string>
 
     <string name="stock_list_title">stock list</string>
     <string name="stock_label_opening_price">開盤價</string>
@@ -17,6 +18,10 @@
     <string name="stock_sort_title">排序</string>
     <string name="stock_sort_code_descending">依股票代號降序</string>
     <string name="stock_sort_code_ascending">依股票代號升序</string>
+
+    <string name="stock_alert_pe_ratio">本益比：%1$s</string>
+    <string name="stock_alert_dividend_yield">殖利率：%1$s</string>
+    <string name="stock_alert_pb_ratio">股價淨值比：%1$s</string>
 
     <string name="btn_open_stock_list_compose">Compose stock list</string>
 

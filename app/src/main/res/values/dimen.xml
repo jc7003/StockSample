@@ -5,4 +5,7 @@
     <dimen name="text_body2">14sp</dimen>
     <dimen name="text_caption">12sp</dimen>
     <dimen name="text_overline">10sp</dimen>
+
+    <dimen name="dialog_horizontal_margin">32dp</dimen>
+    <dimen name="dialog_corner_radius">28dp</dimen>
 </resources>

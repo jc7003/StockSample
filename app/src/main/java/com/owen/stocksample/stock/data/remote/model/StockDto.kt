@@ -56,10 +56,13 @@ data class StockBwiBbuDto(
     val code: String? = null,
     @SerializedName("Name")
     val name: String? = null,
+    /** 本益比 */
     @SerializedName("PEratio")
     val peRatio: String? = null,
+    /** 殖利率 */
     @SerializedName("DividendYield")
     val dividendYield: String? = null,
+    /** 股價淨值比 */
     @SerializedName("PBratio")
     val pbRatio: String? = null,
 )

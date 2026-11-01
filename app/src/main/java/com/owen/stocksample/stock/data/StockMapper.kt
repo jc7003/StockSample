@@ -1,10 +1,11 @@
 package com.owen.stocksample.stock.data
 
+import com.owen.stocksample.stock.data.remote.model.StockBwiBbuDto
 import com.owen.stocksample.stock.data.remote.model.StockDayDto
 import com.owen.stocksample.stock.domain.Stock
 
 /** 缺少代號或名稱的資料無法辨識，回傳 null。 */
-fun StockDayDto.toDomain(monthlyAveragePrice: Double?): Stock? {
+fun StockDayDto.toDomain(monthlyAveragePrice: Double?, bwiBbuDto: StockBwiBbuDto?): Stock? {
     val code = code?.takeIf { it.isNotBlank() } ?: return null
     val name = name?.takeIf { it.isNotBlank() } ?: return null
     return Stock(
@@ -19,6 +20,9 @@ fun StockDayDto.toDomain(monthlyAveragePrice: Double?): Stock? {
         change = change.toNumber()?.toDoubleOrNull(),
         monthlyAveragePrice = monthlyAveragePrice,
         transaction = transaction.toNumber()?.toLongOrNull(),
+        peRatio = bwiBbuDto?.peRatio ?: "",
+        dividendYield = bwiBbuDto?.dividendYield ?: "",
+        pbRatio = bwiBbuDto?.pbRatio ?: "",
     )
 }
 

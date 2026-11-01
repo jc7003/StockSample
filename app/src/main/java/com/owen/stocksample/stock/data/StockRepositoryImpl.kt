@@ -14,10 +14,11 @@ class StockRepositoryImpl @Inject constructor(
 
     override suspend fun getStocks(): Result<List<Stock>> = safeApiCall {
         coroutineScope {
-            val stockDays = async { stockApi.getStockDayList() }
-            val stockDayAvgs = async { stockApi.getStockDayAvgList() }
+            val stockDayList = async { stockApi.getStockDayList() }
+            val stockDayAvgList = async { stockApi.getStockDayAvgList() }
+            val stockBwiBbuList = async { stockApi.getStockBwiBbuList() }
 
-            val monthlyAveragePrices = stockDayAvgs.await()
+            val monthlyAveragePrices = stockDayAvgList.await()
                 .mapNotNull { dto ->
                     val code = dto.code ?: return@mapNotNull null
                     val price = dto.monthlyAveragePrice.toNumber()?.toDoubleOrNull()
@@ -25,8 +26,14 @@ class StockRepositoryImpl @Inject constructor(
                 }
                 .toMap()
 
-            stockDays.await().mapNotNull { dto ->
-                dto.toDomain(monthlyAveragePrices[dto.code])
+            val bwiBbuMap = stockBwiBbuList.await()
+                .mapNotNull { dto ->
+                    val code = dto.code ?: return@mapNotNull null
+                    code to dto
+                }.toMap()
+
+            stockDayList.await().mapNotNull { dto ->
+                dto.toDomain(monthlyAveragePrices[dto.code], bwiBbuMap[dto.code])
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.owen.stocksample.stock.ui
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.viewModels
@@ -9,17 +10,18 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.owen.stocksample.R
-import com.owen.stocksample.core.network.ApiException
-import com.owen.stocksample.core.utils.ColorUtils
+import com.owen.stocksample.core.extensions.showSingle
 import com.owen.stocksample.core.extensions.toCompactText
 import com.owen.stocksample.core.extensions.toDisplayText
+import com.owen.stocksample.core.network.ApiException
+import com.owen.stocksample.core.utils.ColorUtils
 import com.owen.stocksample.databinding.ActivityStockListBinding
 import com.owen.stocksample.databinding.ItemStockBinding
+import com.owen.stocksample.dialog.SimpleCenterDialog
 import com.owen.stocksample.stock.domain.Stock
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -46,10 +48,7 @@ class StockListActivity : AppCompatActivity() {
                 finish()
             }
             btnSort.setOnClickListener {
-                // 避免連點開出多個 bottom sheet
-                if (supportFragmentManager.findFragmentByTag(BottomDialogStockSort.TAG) == null) {
-                    BottomDialogStockSort().show(supportFragmentManager, BottomDialogStockSort.TAG)
-                }
+                BottomDialogStockSort().showSingle(supportFragmentManager)
             }
 
             swipeRefresh.setOnRefreshListener {
@@ -141,11 +140,50 @@ class StockListActivity : AppCompatActivity() {
         ) : RecyclerView.ViewHolder(binding.root) {
 
             init {
-                // TODO: 點擊事件
+                binding.root.setOnClickListener {
+                    val stock = it.tag as Stock
+
+                    val msg = StringBuilder().apply {
+                        if (!TextUtils.isEmpty(stock.peRatio)) {
+                            this.append(
+                                getString(
+                                    R.string.stock_alert_pe_ratio,
+                                    stock.peRatio
+                                )
+                            )
+                            this.append("\n")
+                        }
+                        if (!TextUtils.isEmpty(stock.dividendYield)) {
+                            this.append(
+                                getString(
+                                    R.string.stock_alert_dividend_yield,
+                                    stock.dividendYield
+                                )
+                            )
+                            this.append("\n")
+                        }
+                        if (!TextUtils.isEmpty(stock.pbRatio)) {
+                            this.append(
+                                getString(
+                                    R.string.stock_alert_pb_ratio,
+                                    stock.pbRatio
+                                )
+                            )
+                        }
+                    }.toString()
+
+                    SimpleCenterDialog.newInstance(
+                        requestKey = SimpleCenterDialog.TAG,
+                        title = stock.name,
+                        message = msg,
+                        positiveText = getString(R.string.common_confirm)
+                    ).showSingle(supportFragmentManager)
+                }
             }
 
             fun bind(stock: Stock) {
                 with(binding) {
+                    root.tag = stock
                     tvCode.text = stock.code
                     tvName.text = stock.name
                     tvOpeningPrice.text = stock.openingPrice.toDisplayText()
@@ -168,7 +206,12 @@ class StockListActivity : AppCompatActivity() {
                         null
                     }
                     tvClosingPrice.text = closingPrice.toDisplayText()
-                    tvClosingPrice.setTextColor(ColorUtils.getChangeColor(root.context, diffFromAverage))
+                    tvClosingPrice.setTextColor(
+                        ColorUtils.getChangeColor(
+                            root.context,
+                            diffFromAverage
+                        )
+                    )
                 }
             }
         }
