@@ -46,6 +46,16 @@ class StockListActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         with(binding) {
+            // targetSdk 35 以上在 Android 15+ 強制 edge-to-edge，需自行避開系統列；舊版系統 insets 為 0 不受影響
+            ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
+                val bars = insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+                )
+                toolbar.updatePadding(left = bars.left, top = bars.top, right = bars.right)
+                // 列表可捲到導覽列底下，最後一筆仍能完整捲出
+                rvStock.updatePadding(left = bars.left, right = bars.right, bottom = bars.bottom)
+                insets
+            }
 
             setSupportActionBar(toolbar)
             toolbar.setNavigationOnClickListener {
