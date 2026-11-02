@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,7 +35,8 @@ class StockViewModel @Inject constructor(
         } else {
             state
         }
-    }.flowOn(Dispatchers.Default).stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), StockUiState.Loading)
+    }.flowOn(Dispatchers.Default)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), StockUiState.Loading)
 
     private var loadJob: Job? = null
 
@@ -49,8 +51,10 @@ class StockViewModel @Inject constructor(
 
         loadJob = viewModelScope.launch {
             _loadState.value = StockUiState.Loading
-            stockRepository.getStocks()
-                .onSuccess { _loadState.value = StockUiState.Success(it) }
+            // API 回應後的資料合併與轉換在 IO 執行，避免佔用主執行緒
+            withContext(Dispatchers.IO) {
+                stockRepository.getStocks()
+            }.onSuccess { _loadState.value = StockUiState.Success(it) }
                 .onFailure { _loadState.value = StockUiState.Error(it) }
         }
     }
