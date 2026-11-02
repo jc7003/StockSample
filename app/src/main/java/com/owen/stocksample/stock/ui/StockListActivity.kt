@@ -5,7 +5,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -76,6 +79,8 @@ class StockListActivity : AppCompatActivity() {
         with(binding) {
             swipeRefresh.isRefreshing = state is StockUiState.Loading
             errorView.root.isVisible = state is StockUiState.Error
+            // 錯誤時隱藏列表避免與錯誤畫面重疊；只是隱藏，資料與捲動位置都會保留
+            rvStock.isVisible = state !is StockUiState.Error
 
             when (state) {
                 StockUiState.Loading -> Unit
@@ -159,6 +164,7 @@ class StockListActivity : AppCompatActivity() {
                         stock.dividendYield?.let { getString(R.string.stock_alert_dividend_yield, it.toDisplayText()) },
                         stock.pbRatio?.let { getString(R.string.stock_alert_pb_ratio, it.toDisplayText()) },
                     ).joinToString("\n")
+                        .ifEmpty { getString(R.string.stock_alert_no_valuation) }
 
                     SimpleCenterDialog.newInstance(
                         requestKey = SimpleCenterDialog.TAG,

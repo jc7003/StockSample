@@ -437,11 +437,13 @@ private fun SortOptionRow(label: String, selected: Boolean, onClick: () -> Unit)
 /** 顯示本益比、殖利率、股價淨值比，無資料的項目整行不顯示。 */
 @Composable
 private fun StockInfoDialog(stock: Stock, onDismiss: () -> Unit) {
+    val noValuation = stringResource(R.string.stock_alert_no_valuation)
     val message = listOfNotNull(
         stock.peRatio?.let { stringResource(R.string.stock_alert_pe_ratio, it.toDisplayText()) },
         stock.dividendYield?.let { stringResource(R.string.stock_alert_dividend_yield, it.toDisplayText()) },
         stock.pbRatio?.let { stringResource(R.string.stock_alert_pb_ratio, it.toDisplayText()) },
     ).joinToString("\n")
+        .ifEmpty { noValuation }
 
     SimpleCenterDialog(
         title = stock.name,
