@@ -10,7 +10,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Cache
 import okhttp3.CacheControl
+import okhttp3.ConnectionSpec
 import okhttp3.OkHttpClient
+import okhttp3.TlsVersion
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -26,6 +28,10 @@ object NetworkModule {
 
     /** HTTP 快取上限，月均價資料未壓縮約 4MB */
     private const val HTTP_CACHE_SIZE = 20L * 1024 * 1024
+
+    private val TLS_1_2_SPEC = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+        .tlsVersions(TlsVersion.TLS_1_2)
+        .build()
 
     @Provides
     @Singleton
@@ -47,6 +53,10 @@ object NetworkModule {
                 chain.proceed(request)
             }
             .addInterceptor(errorInterceptor)
+            // Android API 37 以 TLS 1.3 連線時，TWSE 的 CDN 會回傳 www.twse.com.tw 的憑證而驗證失敗，
+            // API 31 與 TLS 1.2 皆正常，故限定 TLS 1.2；cipher suite 沿用 MODERN_TLS，仍為前向保密的 AEAD 加密。
+            // 之後可移除此設定，在 API 37 模擬器驗證是否已恢復正常
+            .connectionSpecs(listOf(TLS_1_2_SPEC))
             .apply {
                 if (BuildConfig.DEBUG) {
                     // 放在 ErrorInterceptor 之後，才能在錯誤被轉換前看到原始回應
