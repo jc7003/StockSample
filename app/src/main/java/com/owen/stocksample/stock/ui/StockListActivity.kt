@@ -1,7 +1,6 @@
 package com.owen.stocksample.stock.ui
 
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.activity.viewModels
@@ -143,34 +142,12 @@ class StockListActivity : AppCompatActivity() {
                 binding.root.setOnClickListener {
                     val stock = it.tag as Stock
 
-                    val msg = StringBuilder().apply {
-                        if (!TextUtils.isEmpty(stock.peRatio)) {
-                            this.append(
-                                getString(
-                                    R.string.stock_alert_pe_ratio,
-                                    stock.peRatio
-                                )
-                            )
-                            this.append("\n")
-                        }
-                        if (!TextUtils.isEmpty(stock.dividendYield)) {
-                            this.append(
-                                getString(
-                                    R.string.stock_alert_dividend_yield,
-                                    stock.dividendYield
-                                )
-                            )
-                            this.append("\n")
-                        }
-                        if (!TextUtils.isEmpty(stock.pbRatio)) {
-                            this.append(
-                                getString(
-                                    R.string.stock_alert_pb_ratio,
-                                    stock.pbRatio
-                                )
-                            )
-                        }
-                    }.toString()
+                    // 無資料的項目整行不顯示
+                    val msg = listOfNotNull(
+                        stock.peRatio?.let { getString(R.string.stock_alert_pe_ratio, it.toDisplayText()) },
+                        stock.dividendYield?.let { getString(R.string.stock_alert_dividend_yield, it.toDisplayText()) },
+                        stock.pbRatio?.let { getString(R.string.stock_alert_pb_ratio, it.toDisplayText()) },
+                    ).joinToString("\n")
 
                     SimpleCenterDialog.newInstance(
                         requestKey = SimpleCenterDialog.TAG,

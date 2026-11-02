@@ -3,9 +3,10 @@ package com.owen.stocksample.stock.data
 import com.owen.stocksample.stock.data.remote.model.StockBwiBbuDto
 import com.owen.stocksample.stock.data.remote.model.StockDayDto
 import com.owen.stocksample.stock.domain.Stock
+import java.math.BigDecimal
 
 /** 缺少代號或名稱的資料無法辨識，回傳 null。 */
-fun StockDayDto.toDomain(monthlyAveragePrice: Double?, bwiBbuDto: StockBwiBbuDto?): Stock? {
+fun StockDayDto.toDomain(monthlyAveragePrice: BigDecimal?, bwiBbuDto: StockBwiBbuDto?): Stock? {
     val code = code?.takeIf { it.isNotBlank() } ?: return null
     val name = name?.takeIf { it.isNotBlank() } ?: return null
     return Stock(
@@ -13,16 +14,16 @@ fun StockDayDto.toDomain(monthlyAveragePrice: Double?, bwiBbuDto: StockBwiBbuDto
         name = name,
         tradeVolume = tradeVolume.toNumber()?.toLongOrNull(),
         tradeValue = tradeValue.toNumber()?.toLongOrNull(),
-        openingPrice = openingPrice.toNumber()?.toDoubleOrNull(),
-        highestPrice = highestPrice.toNumber()?.toDoubleOrNull(),
-        lowestPrice = lowestPrice.toNumber()?.toDoubleOrNull(),
-        closingPrice = closingPrice.toNumber()?.toDoubleOrNull(),
-        change = change.toNumber()?.toDoubleOrNull(),
+        openingPrice = openingPrice.toNumber()?.toBigDecimalOrNull(),
+        highestPrice = highestPrice.toNumber()?.toBigDecimalOrNull(),
+        lowestPrice = lowestPrice.toNumber()?.toBigDecimalOrNull(),
+        closingPrice = closingPrice.toNumber()?.toBigDecimalOrNull(),
+        change = change.toNumber()?.toBigDecimalOrNull(),
         monthlyAveragePrice = monthlyAveragePrice,
         transaction = transaction.toNumber()?.toLongOrNull(),
-        peRatio = bwiBbuDto?.peRatio ?: "",
-        dividendYield = bwiBbuDto?.dividendYield ?: "",
-        pbRatio = bwiBbuDto?.pbRatio ?: "",
+        peRatio = bwiBbuDto?.peRatio.toNumber()?.toBigDecimalOrNull(),
+        dividendYield = bwiBbuDto?.dividendYield.toNumber()?.toBigDecimalOrNull(),
+        pbRatio = bwiBbuDto?.pbRatio.toNumber()?.toBigDecimalOrNull(),
     )
 }
 

@@ -21,7 +21,7 @@ class StockRepositoryImpl @Inject constructor(
             val monthlyAveragePrices = stockDayAvgList.await()
                 .mapNotNull { dto ->
                     val code = dto.code ?: return@mapNotNull null
-                    val price = dto.monthlyAveragePrice.toNumber()?.toDoubleOrNull()
+                    val price = dto.monthlyAveragePrice.toNumber()?.toBigDecimalOrNull()
                     code to price
                 }
                 .toMap()
