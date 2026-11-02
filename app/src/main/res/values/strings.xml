@@ -23,6 +23,6 @@
     <string name="stock_alert_dividend_yield">殖利率：%1$s</string>
     <string name="stock_alert_pb_ratio">股價淨值比：%1$s</string>
 
-    <string name="btn_open_stock_list_compose">Compose stock list</string>
+    <string name="stock_list_title_compose">Compose stock list</string>
 
 </resources>

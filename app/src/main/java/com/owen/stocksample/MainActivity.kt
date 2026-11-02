@@ -8,6 +8,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.owen.stocksample.databinding.ActivityMainBinding
 import com.owen.stocksample.stock.ui.StockListActivity
+import com.owen.stocksample.stock.ui.compose.StockListComposeActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             btnComposeStockList.setOnClickListener {
-
+                startActivity(Intent(this@MainActivity, StockListComposeActivity::class.java))
             }
         }
     }
