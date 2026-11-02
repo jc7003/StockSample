@@ -34,6 +34,8 @@ class StockListActivity : AppCompatActivity() {
 
     private lateinit var adapter: StockListAdapter
 
+    /** 目前列表顯示的排序方式，用來判斷是否需要捲回頂端 */
+    private var renderedSort: StockSort? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +59,10 @@ class StockListActivity : AppCompatActivity() {
                 viewModel.loadStocks()
             }
 
-            adapter = StockListAdapter()
+            adapter = StockListAdapter().apply {
+                // 等資料到達後才還原捲動位置，避免空列表時就套用而失效
+                stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+            }
         }
 
         lifecycleScope.launch {
@@ -79,9 +84,15 @@ class StockListActivity : AppCompatActivity() {
                         binding.rvStock.adapter = adapter
                     }
 
+                    // 只有排序變更時才捲回頂端；旋轉螢幕後 renderedSort 為 null，保留 RecyclerView 還原的位置
+                    val sort = viewModel.sort.value
+                    val sortChanged = renderedSort != null && renderedSort != sort
+                    renderedSort = sort
                     adapter.submitList(state.stocks) {
-                        rvStock.post {
-                            rvStock.scrollToPosition(0)
+                        if (sortChanged) {
+                            rvStock.post {
+                                rvStock.scrollToPosition(0)
+                            }
                         }
                     }
                 }
