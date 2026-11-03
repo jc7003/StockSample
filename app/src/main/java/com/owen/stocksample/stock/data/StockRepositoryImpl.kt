@@ -4,16 +4,17 @@ import com.owen.stocksample.core.network.safeApiCall
 import com.owen.stocksample.stock.data.remote.StockApi
 import com.owen.stocksample.stock.domain.Stock
 import com.owen.stocksample.stock.domain.StockRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class StockRepositoryImpl @Inject constructor(
-    private val stockApi: StockApi
+    private val stockApi: StockApi,
 ) : StockRepository {
 
     override suspend fun getStocks(): Result<List<Stock>> = safeApiCall {
-        coroutineScope {
+        withContext(Dispatchers.Default) {
             val stockDayList = async { stockApi.getStockDayList() }
             val stockDayAvgList = async { stockApi.getStockDayAvgList() }
             val stockBwiBbuList = async { stockApi.getStockBwiBbuList() }

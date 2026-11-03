@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/error_no_network" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_retry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

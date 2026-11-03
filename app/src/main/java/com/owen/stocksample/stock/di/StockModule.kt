@@ -18,7 +18,7 @@ abstract class StockModule {
     @Binds
     @Singleton
     abstract fun bindStockRepository(
-        impl: StockRepositoryImpl
+        impl: StockRepositoryImpl,
     ): StockRepository
 
     companion object {

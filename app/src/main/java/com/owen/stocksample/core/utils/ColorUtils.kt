@@ -8,6 +8,8 @@ import java.math.BigDecimal
 
 object ColorUtils {
 
+    private const val TAG = "ColorUtils"
+
     /** 依漲跌價差取得文字顏色：null 或 0 用 textColorPrimary，大於 0 用 upColor，小於 0 用 downColor。 */
     @ColorInt
     fun getChangeColor(context: Context, change: BigDecimal?): Int {
@@ -17,6 +19,6 @@ object ColorUtils {
             1 -> R.attr.upColor
             else -> R.attr.downColor
         }
-        return MaterialColors.getColor(context, colorAttr, "ColorUtils")
+        return MaterialColors.getColor(context, colorAttr, TAG)
     }
 }

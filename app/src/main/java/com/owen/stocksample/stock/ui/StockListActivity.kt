@@ -3,6 +3,7 @@ package com.owen.stocksample.stock.ui
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -41,6 +42,7 @@ class StockListActivity : AppCompatActivity() {
     private var renderedSort: StockSort? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         binding = ActivityStockListBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -49,7 +51,7 @@ class StockListActivity : AppCompatActivity() {
             // targetSdk 35 以上在 Android 15+ 強制 edge-to-edge，需自行避開系統列；舊版系統 insets 為 0 不受影響
             ViewCompat.setOnApplyWindowInsetsListener(root) { _, insets ->
                 val bars = insets.getInsets(
-                    WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+                    WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout(),
                 )
                 toolbar.updatePadding(left = bars.left, top = bars.top, right = bars.right)
                 // 列表可捲到導覽列底下，最後一筆仍能完整捲出
@@ -62,7 +64,7 @@ class StockListActivity : AppCompatActivity() {
                 finish()
             }
             btnSort.setOnClickListener {
-                BottomDialogStockSort().showSingle(supportFragmentManager)
+                BottomDialogStockSort().showSingle(supportFragmentManager, BottomDialogStockSort.TAG)
             }
 
             swipeRefresh.setOnRefreshListener {
@@ -95,8 +97,8 @@ class StockListActivity : AppCompatActivity() {
             when (state) {
                 StockUiState.Loading -> Unit
                 is StockUiState.Success -> {
-                    if (binding.rvStock.adapter !is StockListAdapter) {
-                        binding.rvStock.adapter = adapter
+                    if (rvStock.adapter !is StockListAdapter) {
+                        rvStock.adapter = adapter
                     }
 
                     // 只有排序變更時才捲回頂端；旋轉螢幕後 renderedSort 為 null，保留 RecyclerView 還原的位置
@@ -127,42 +129,27 @@ class StockListActivity : AppCompatActivity() {
 
     inner class StockListAdapter : ListAdapter<Stock, StockListAdapter.StockViewHolder>(
         object : DiffUtil.ItemCallback<Stock>() {
-            override fun areItemsTheSame(
-                oldItem: Stock,
-                newItem: Stock
-            ): Boolean {
+            override fun areItemsTheSame(oldItem: Stock, newItem: Stock): Boolean {
                 return oldItem.code == newItem.code
             }
 
-            override fun areContentsTheSame(
-                oldItem: Stock,
-                newItem: Stock
-            ): Boolean {
+            override fun areContentsTheSame(oldItem: Stock, newItem: Stock): Boolean {
                 return oldItem == newItem
             }
-        }
+        },
     ) {
 
-        override fun onCreateViewHolder(
-            parent: ViewGroup,
-            viewType: Int
-        ): StockViewHolder {
-
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StockViewHolder {
             return StockViewHolder(
-                ItemStockBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ItemStockBinding.inflate(LayoutInflater.from(parent.context), parent, false),
             )
         }
 
-        override fun onBindViewHolder(
-            holder: StockViewHolder,
-            position: Int
-        ) {
+        override fun onBindViewHolder(holder: StockViewHolder, position: Int) {
             holder.bind(getItem(position))
         }
 
-        inner class StockViewHolder(
-            private val binding: ItemStockBinding
-        ) : RecyclerView.ViewHolder(binding.root) {
+        inner class StockViewHolder(private val binding: ItemStockBinding) : RecyclerView.ViewHolder(binding.root) {
 
             init {
                 binding.root.setOnClickListener {
@@ -180,8 +167,8 @@ class StockListActivity : AppCompatActivity() {
                         requestKey = SimpleCenterDialog.TAG,
                         title = stock.name,
                         message = msg,
-                        positiveText = getString(R.string.common_confirm)
-                    ).showSingle(supportFragmentManager)
+                        positiveText = getString(R.string.common_confirm),
+                    ).showSingle(supportFragmentManager, SimpleCenterDialog.TAG)
                 }
             }
 
@@ -210,19 +197,9 @@ class StockListActivity : AppCompatActivity() {
                         null
                     }
                     tvClosingPrice.text = closingPrice.toDisplayText()
-                    tvClosingPrice.setTextColor(
-                        ColorUtils.getChangeColor(
-                            root.context,
-                            diffFromAverage
-                        )
-                    )
+                    tvClosingPrice.setTextColor(ColorUtils.getChangeColor(root.context, diffFromAverage))
                 }
             }
         }
-    }
-
-    companion object {
-        /** 切換排序後列表淡入的時間（毫秒） */
-        private const val SORT_FADE_IN_DURATION = 150L
     }
 }

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">StockSample</string>
 
@@ -24,6 +25,6 @@
     <string name="stock_alert_pb_ratio">股價淨值比：%1$s</string>
     <string name="stock_alert_no_valuation">暫無本益比、殖利率及股價淨值比資料</string>
 
-    <string name="stock_list_title_compose">Compose stock list</string>
+    <string name="stock_list_title_compose">compose stock list</string>
 
 </resources>

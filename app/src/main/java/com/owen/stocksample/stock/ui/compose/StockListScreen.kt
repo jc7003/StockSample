@@ -53,12 +53,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.owen.stocksample.R
-import com.owen.stocksample.core.extensions.toCompactText
-import com.owen.stocksample.core.extensions.toDisplayText
-import com.owen.stocksample.core.network.ApiException
 import com.owen.stocksample.compose.SimpleCenterDialog
 import com.owen.stocksample.compose.StockSampleTheme
 import com.owen.stocksample.compose.stockColors
+import com.owen.stocksample.core.extensions.toCompactText
+import com.owen.stocksample.core.extensions.toDisplayText
+import com.owen.stocksample.core.network.ApiException
 import com.owen.stocksample.stock.domain.Stock
 import com.owen.stocksample.stock.ui.StockSort
 import com.owen.stocksample.stock.ui.StockUiState

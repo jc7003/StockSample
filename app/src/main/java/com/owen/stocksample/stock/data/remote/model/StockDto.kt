@@ -3,7 +3,6 @@ package com.owen.stocksample.stock.data.remote.model
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
-
 /** 上市個股日成交資訊。 */
 @Keep
 data class StockDayDto(
@@ -30,7 +29,6 @@ data class StockDayDto(
     @SerializedName("Transaction")
     val transaction: String? = null,
 )
-
 
 /** 上市個股日收盤價及月均價。 */
 @Keep

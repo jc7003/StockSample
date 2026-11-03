@@ -1,4 +1,4 @@
-package com.owen.stocksample.dialog
+package com.owen.stocksample.dialog.base
 
 import android.content.Context
 import android.content.res.ColorStateList
@@ -38,7 +38,7 @@ abstract class BaseCenterDialog<VB : ViewBinding> : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         // 使用 inflater 的 context 才會套用 dialog 主題，requireContext() 是 Activity 主題
         val root = MaxHeightFrameLayout(inflater.context).apply {
@@ -51,10 +51,6 @@ abstract class BaseCenterDialog<VB : ViewBinding> : DialogFragment() {
         return root
     }
 
-    override fun onStart() {
-        super.onStart()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -62,13 +58,11 @@ abstract class BaseCenterDialog<VB : ViewBinding> : DialogFragment() {
 
     private fun createBackground(context: Context): MaterialShapeDrawable {
         val cornerRadius = context.resources.getDimension(R.dimen.dialog_corner_radius)
-        val shape = ShapeAppearanceModel.builder()
-            .setAllCornerSizes(cornerRadius)
-            .build()
+        val shape = ShapeAppearanceModel.builder().setAllCornerSizes(cornerRadius).build()
 
         return MaterialShapeDrawable(shape).apply {
             fillColor = ColorStateList.valueOf(
-                MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceContainerHigh, TAG)
+                MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceContainerHigh, TAG),
             )
         }
     }
@@ -84,7 +78,7 @@ abstract class BaseCenterDialog<VB : ViewBinding> : DialogFragment() {
                 MeasureSpec.UNSPECIFIED -> MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.AT_MOST)
                 else -> MeasureSpec.makeMeasureSpec(
                     min(MeasureSpec.getSize(heightMeasureSpec), maxHeight),
-                    MeasureSpec.getMode(heightMeasureSpec)
+                    MeasureSpec.getMode(heightMeasureSpec),
                 )
             }
             super.onMeasure(widthMeasureSpec, limitedHeightSpec)

@@ -201,13 +201,13 @@
 
         <!-- 第四列：成交筆數 / 成交股數 / 成交金額 -->
         <LinearLayout
-            android:id="@+id/layout_transaction"
+            android:id="@+id/ll_transaction"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:orientation="horizontal"
             app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toStartOf="@id/layout_trade_volume"
+            app:layout_constraintEnd_toStartOf="@id/ll_trade_volume"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
@@ -235,7 +235,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/layout_trade_volume"
+            android:id="@+id/ll_trade_volume"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -265,9 +265,8 @@
                 tools:text="32,345,678" />
         </LinearLayout>
 
-
         <LinearLayout
-            android:id="@+id/layout_trade_value"
+            android:id="@+id/ll_trade_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
@@ -275,7 +274,7 @@
             app:layout_constrainedWidth="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@id/layout_trade_volume"
+            app:layout_constraintStart_toEndOf="@id/ll_trade_volume"
             app:layout_constraintTop_toBottomOf="@id/tv_change">
 
             <TextView

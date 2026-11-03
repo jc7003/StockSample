@@ -15,12 +15,11 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class StockViewModel @Inject constructor(
-    private val stockRepository: StockRepository
+    private val stockRepository: StockRepository,
 ) : ViewModel() {
 
     /** API 回傳的原始資料，排序前 */
@@ -51,10 +50,8 @@ class StockViewModel @Inject constructor(
 
         loadJob = viewModelScope.launch {
             _loadState.value = StockUiState.Loading
-            // API 回應後的資料合併與轉換在 IO 執行，避免佔用主執行緒
-            withContext(Dispatchers.IO) {
-                stockRepository.getStocks()
-            }.onSuccess { _loadState.value = StockUiState.Success(it) }
+            stockRepository.getStocks()
+                .onSuccess { _loadState.value = StockUiState.Success(it) }
                 .onFailure { _loadState.value = StockUiState.Error(it) }
         }
     }
