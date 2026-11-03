@@ -3,6 +3,10 @@
 使用 [臺灣證券交易所 OpenAPI](https://openapi.twse.com.tw/) 顯示上市個股每日成交資訊的 Android 範例專案。
 同一份 `ViewModel` 分別以 **View System（XML）** 與 **Jetpack Compose** 實作兩套列表畫面，方便對照。
 
+## Demo
+
+[![StockSample Demo](https://img.youtube.com/vi/kLzqqpFkrsQ/hqdefault.jpg)](https://youtu.be/kLzqqpFkrsQ)
+
 ## 功能
 
 - 上市個股列表：開盤 / 最高 / 最低 / 收盤價、漲跌、成交量、成交金額、成交筆數
