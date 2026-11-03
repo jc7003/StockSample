@@ -8,33 +8,34 @@ import com.owen.stocksample.stock.data.remote.model.StockDayDto
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.math.BigDecimal
 
 class StockRepositoryImplTest {
 
-    /** 回傳固定資料的 StockApi，設定 [error] 時三支 API 都丟出該例外。 */
+    /** 回傳固定資料的 StockApi，設定各 API 的 error 時改為丟出該例外。 */
     private class FakeStockApi(
         var dayList: List<StockDayDto> = emptyList(),
         var dayAvgList: List<StockDayAvgDto> = emptyList(),
         var bwiBbuList: List<StockBwiBbuDto> = emptyList(),
-        var error: Exception? = null,
+        var dayError: Exception? = null,
+        var dayAvgError: Exception? = null,
+        var bwiBbuError: Exception? = null,
     ) : StockApi {
 
         override suspend fun getStockDayList(): List<StockDayDto> {
-            error?.let { throw it }
+            dayError?.let { throw it }
             return dayList
         }
 
         override suspend fun getStockDayAvgList(): List<StockDayAvgDto> {
-            error?.let { throw it }
+            dayAvgError?.let { throw it }
             return dayAvgList
         }
 
         override suspend fun getStockBwiBbuList(): List<StockBwiBbuDto> {
-            error?.let { throw it }
+            bwiBbuError?.let { throw it }
             return bwiBbuList
         }
     }
@@ -114,14 +115,39 @@ class StockRepositoryImplTest {
     }
 
     @Test
-    fun getStocks_apiError_returnsFailure() = runTest {
-        val error = ApiException.Server(503)
-        api.error = error
+    fun getStocks_dayApiError_returnsFailure() = runTest {
+        api.dayError = ApiException.Server(503)
 
-        val result = repository.getStocks()
+        val error = repository.getStocks().exceptionOrNull()
 
-        assertTrue(result.isFailure)
-        assertSame(error, result.exceptionOrNull())
+        // 不用 assertSame：測試時 coroutines 會為了補上 stack trace 而複製例外，實例可能不同
+        assertTrue(error is ApiException.Server)
+        assertEquals(503, (error as ApiException.Server).code)
+    }
+
+    @Test
+    fun getStocks_dayAvgApiError_returnsFailure() = runTest {
+        api.dayList = listOf(dayDto("2330"))
+        api.dayAvgError = ApiException.Timeout()
+
+        val error = repository.getStocks().exceptionOrNull()
+
+        assertTrue(error is ApiException.Timeout)
+    }
+
+    @Test
+    fun getStocks_bwiBbuApiError_stillReturnsStocks() = runTest {
+        // 估值資料失敗不影響列表，只是本益比等欄位為 null
+        api.dayList = listOf(dayDto("2330"))
+        api.dayAvgList = listOf(StockDayAvgDto(code = "2330", monthlyAveragePrice = "1,040.25"))
+        api.bwiBbuError = ApiException.NoNetwork()
+
+        val stock = repository.getStocks().getOrThrow().single()
+
+        assertEquals(BigDecimal("1040.25"), stock.monthlyAveragePrice)
+        assertNull(stock.peRatio)
+        assertNull(stock.dividendYield)
+        assertNull(stock.pbRatio)
     }
 
     private fun dayDto(code: String) = StockDayDto(

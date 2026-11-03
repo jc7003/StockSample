@@ -17,7 +17,10 @@ class StockRepositoryImpl @Inject constructor(
         withContext(Dispatchers.Default) {
             val stockDayList = async { stockApi.getStockDayList() }
             val stockDayAvgList = async { stockApi.getStockDayAvgList() }
-            val stockBwiBbuList = async { stockApi.getStockBwiBbuList() }
+            // 估值資料只在點開個股時顯示，失敗時以空資料繼續，不影響列表
+            val stockBwiBbuList = async {
+                safeApiCall { stockApi.getStockBwiBbuList() }.getOrDefault(emptyList())
+            }
 
             val monthlyAveragePrices = stockDayAvgList.await()
                 .mapNotNull { dto ->
