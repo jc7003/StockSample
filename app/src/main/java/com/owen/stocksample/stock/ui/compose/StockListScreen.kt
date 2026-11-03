@@ -43,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,11 +59,13 @@ import com.owen.stocksample.compose.StockSampleTheme
 import com.owen.stocksample.compose.stockColors
 import com.owen.stocksample.core.extensions.toCompactText
 import com.owen.stocksample.core.extensions.toDisplayText
-import com.owen.stocksample.core.network.ApiException
+import com.owen.stocksample.core.extensions.toErrorMessage
+import com.owen.stocksample.core.utils.PriceTrend
 import com.owen.stocksample.stock.domain.Stock
 import com.owen.stocksample.stock.ui.StockSort
 import com.owen.stocksample.stock.ui.StockUiState
 import com.owen.stocksample.stock.ui.StockViewModel
+import com.owen.stocksample.stock.ui.toValuationMessage
 import kotlinx.coroutines.launch
 import java.math.BigDecimal
 
@@ -91,20 +94,22 @@ fun StockListScreen(
     onRefresh: () -> Unit,
     onSortSelected: (StockSort) -> Unit,
 ) {
-    // 重新整理時 uiState 會回到 Loading，保留上一次的列表避免畫面清空
-    var stocks by remember { mutableStateOf((uiState as? StockUiState.Success)?.stocks.orEmpty()) }
+    // 重新整理時 uiState 會回到 Loading，保留上一次的結果避免畫面清空
+    var lastSuccess by remember { mutableStateOf(uiState as? StockUiState.Success) }
     LaunchedEffect(uiState) {
         if (uiState is StockUiState.Success) {
-            stocks = uiState.stocks
+            lastSuccess = uiState
         }
     }
+    val stocks = lastSuccess?.stocks.orEmpty()
 
-    // 排序後的新列表到達時才捲回頂端，旋轉螢幕不會誤觸
+    // 列表的排序與上次不同時才捲回頂端；scrolledSort 會跨旋轉保存，旋轉螢幕不會誤觸
     val listState = rememberLazyListState()
     var scrolledSort by rememberSaveable { mutableStateOf(sort) }
-    LaunchedEffect(stocks) {
-        if (sort != scrolledSort) {
-            scrolledSort = sort
+    LaunchedEffect(lastSuccess) {
+        val currentSort = lastSuccess?.sort ?: return@LaunchedEffect
+        if (currentSort != scrolledSort) {
+            scrolledSort = currentSort
             listState.scrollToItem(0)
         }
     }
@@ -188,10 +193,6 @@ private fun StockListTopBar(onBack: () -> Unit, onSortClick: () -> Unit) {
 
 @Composable
 private fun StockItem(stock: Stock, onClick: () -> Unit) {
-    val diffFromAverage = stock.closingPrice?.let { closing ->
-        stock.monthlyAveragePrice?.let { average -> closing - average }
-    }
-
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
@@ -213,7 +214,7 @@ private fun StockItem(stock: Stock, onClick: () -> Unit) {
                 startValue = stock.openingPrice.toDisplayText(),
                 endLabel = stringResource(R.string.stock_label_closing_price),
                 endValue = stock.closingPrice.toDisplayText(),
-                endColor = changeColor(diffFromAverage),
+                endColor = changeColor(stock.diffFromAverage),
             )
             // 第二列：最高價 / 最低價
             PriceRow(
@@ -260,10 +261,10 @@ private fun StockItem(stock: Stock, onClick: () -> Unit) {
 /** 依漲跌取得文字顏色：null 或 0 使用預設文字顏色，大於 0 為漲色，小於 0 為跌色。 */
 @Composable
 @ReadOnlyComposable
-private fun changeColor(change: BigDecimal?): Color = when (change?.signum() ?: 0) {
-    0 -> Color.Unspecified
-    1 -> MaterialTheme.stockColors.up
-    else -> MaterialTheme.stockColors.down
+private fun changeColor(change: BigDecimal?): Color = when (PriceTrend.of(change)) {
+    PriceTrend.FLAT -> Color.Unspecified
+    PriceTrend.UP -> MaterialTheme.stockColors.up
+    PriceTrend.DOWN -> MaterialTheme.stockColors.down
 }
 
 @Composable
@@ -355,7 +356,7 @@ private fun ErrorContent(throwable: Throwable, onRetry: () -> Unit, modifier: Mo
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = errorMessage(throwable),
+            text = throwable.toErrorMessage(LocalResources.current),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
         )
@@ -364,16 +365,6 @@ private fun ErrorContent(throwable: Throwable, onRetry: () -> Unit, modifier: Mo
             Text(text = stringResource(R.string.common_retry))
         }
     }
-}
-
-/** 對應 StockListActivity 的 Throwable.toMessage()。 */
-@Composable
-private fun errorMessage(throwable: Throwable): String = when (throwable) {
-    is ApiException.NoNetwork -> stringResource(R.string.error_no_network)
-    is ApiException.Timeout -> stringResource(R.string.error_timeout)
-    is ApiException.Server -> stringResource(R.string.error_server, throwable.code)
-    is ApiException.Client -> stringResource(R.string.error_client, throwable.code)
-    else -> stringResource(R.string.error_unknown)
 }
 
 /** 對應 BottomDialogStockSort：預設全展開，點選後套用並收合。 */
@@ -437,17 +428,9 @@ private fun SortOptionRow(label: String, selected: Boolean, onClick: () -> Unit)
 /** 顯示本益比、殖利率、股價淨值比，無資料的項目整行不顯示。 */
 @Composable
 private fun StockInfoDialog(stock: Stock, onDismiss: () -> Unit) {
-    val noValuation = stringResource(R.string.stock_alert_no_valuation)
-    val message = listOfNotNull(
-        stock.peRatio?.let { stringResource(R.string.stock_alert_pe_ratio, it.toDisplayText()) },
-        stock.dividendYield?.let { stringResource(R.string.stock_alert_dividend_yield, it.toDisplayText()) },
-        stock.pbRatio?.let { stringResource(R.string.stock_alert_pb_ratio, it.toDisplayText()) },
-    ).joinToString("\n")
-        .ifEmpty { noValuation }
-
     SimpleCenterDialog(
         title = stock.name,
-        message = message,
+        message = stock.toValuationMessage(LocalResources.current),
         confirmText = stringResource(R.string.common_confirm),
         onDismissRequest = onDismiss,
     )
@@ -474,7 +457,10 @@ private fun StockListScreenPreview() {
     )
     StockSampleTheme {
         StockListScreen(
-            uiState = StockUiState.Success(listOf(stock, stock.copy(code = "2317", name = "鴻海"))),
+            uiState = StockUiState.Success(
+                stocks = listOf(stock, stock.copy(code = "2317", name = "鴻海")),
+                sort = StockSort.CODE_DESCENDING,
+            ),
             sort = StockSort.CODE_DESCENDING,
             onBack = {},
             onRefresh = {},

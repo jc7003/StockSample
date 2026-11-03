@@ -20,7 +20,7 @@ import com.owen.stocksample.R
 import com.owen.stocksample.core.extensions.showSingle
 import com.owen.stocksample.core.extensions.toCompactText
 import com.owen.stocksample.core.extensions.toDisplayText
-import com.owen.stocksample.core.network.ApiException
+import com.owen.stocksample.core.extensions.toErrorMessage
 import com.owen.stocksample.core.utils.ColorUtils
 import com.owen.stocksample.databinding.ActivityStockListBinding
 import com.owen.stocksample.databinding.ItemStockBinding
@@ -102,9 +102,8 @@ class StockListActivity : AppCompatActivity() {
                     }
 
                     // 只有排序變更時才捲回頂端；旋轉螢幕後 renderedSort 為 null，保留 RecyclerView 還原的位置
-                    val sort = viewModel.sort.value
-                    val sortChanged = renderedSort != null && renderedSort != sort
-                    renderedSort = sort
+                    val sortChanged = renderedSort != null && renderedSort != state.sort
+                    renderedSort = state.sort
                     adapter.submitList(state.stocks) {
                         if (sortChanged) {
                             rvStock.post {
@@ -114,17 +113,9 @@ class StockListActivity : AppCompatActivity() {
                     }
                 }
 
-                is StockUiState.Error -> errorView.tvError.text = state.throwable.toMessage()
+                is StockUiState.Error -> errorView.tvError.text = state.throwable.toErrorMessage(resources)
             }
         }
-    }
-
-    private fun Throwable.toMessage(): String = when (this) {
-        is ApiException.NoNetwork -> getString(R.string.error_no_network)
-        is ApiException.Timeout -> getString(R.string.error_timeout)
-        is ApiException.Server -> getString(R.string.error_server, code)
-        is ApiException.Client -> getString(R.string.error_client, code)
-        else -> getString(R.string.error_unknown)
     }
 
     inner class StockListAdapter : ListAdapter<Stock, StockListAdapter.StockViewHolder>(
@@ -155,18 +146,10 @@ class StockListActivity : AppCompatActivity() {
                 binding.root.setOnClickListener {
                     val stock = it.tag as Stock
 
-                    // 無資料的項目整行不顯示
-                    val msg = listOfNotNull(
-                        stock.peRatio?.let { getString(R.string.stock_alert_pe_ratio, it.toDisplayText()) },
-                        stock.dividendYield?.let { getString(R.string.stock_alert_dividend_yield, it.toDisplayText()) },
-                        stock.pbRatio?.let { getString(R.string.stock_alert_pb_ratio, it.toDisplayText()) },
-                    ).joinToString("\n")
-                        .ifEmpty { getString(R.string.stock_alert_no_valuation) }
-
                     SimpleCenterDialog.newInstance(
                         requestKey = SimpleCenterDialog.TAG,
                         title = stock.name,
-                        message = msg,
+                        message = stock.toValuationMessage(resources),
                         positiveText = getString(R.string.common_confirm),
                     ).showSingle(supportFragmentManager, SimpleCenterDialog.TAG)
                 }
@@ -189,15 +172,8 @@ class StockListActivity : AppCompatActivity() {
                     tvChange.text = stock.change.toDisplayText()
                     tvChange.setTextColor(ColorUtils.getChangeColor(root.context, stock.change))
 
-                    val closingPrice = stock.closingPrice
-                    val monthlyAveragePrice = stock.monthlyAveragePrice
-                    val diffFromAverage = if (closingPrice != null && monthlyAveragePrice != null) {
-                        closingPrice - monthlyAveragePrice
-                    } else {
-                        null
-                    }
-                    tvClosingPrice.text = closingPrice.toDisplayText()
-                    tvClosingPrice.setTextColor(ColorUtils.getChangeColor(root.context, diffFromAverage))
+                    tvClosingPrice.text = stock.closingPrice.toDisplayText()
+                    tvClosingPrice.setTextColor(ColorUtils.getChangeColor(root.context, stock.diffFromAverage))
                 }
             }
         }

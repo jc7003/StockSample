@@ -22,18 +22,17 @@ class StockViewModel @Inject constructor(
     private val stockRepository: StockRepository,
 ) : ViewModel() {
 
-    /** API 回傳的原始資料，排序前 */
-    private val _loadState = MutableStateFlow<StockUiState>(StockUiState.Loading)
+    /** API 回傳的原始資料，排序前；null 為載入中 */
+    private val _loadResult = MutableStateFlow<Result<List<Stock>>?>(null)
 
     private val _sort = MutableStateFlow(StockSort.CODE_DESCENDING)
     val sort: StateFlow<StockSort> = _sort.asStateFlow()
 
-    val uiState: StateFlow<StockUiState> = combine(_loadState, _sort) { state, sort ->
-        if (state is StockUiState.Success) {
-            StockUiState.Success(sort.sort(state.stocks))
-        } else {
-            state
-        }
+    val uiState: StateFlow<StockUiState> = combine(_loadResult, _sort) { result, sort ->
+        result?.fold(
+            onSuccess = { StockUiState.Success(sort.sort(it), sort) },
+            onFailure = { StockUiState.Error(it) },
+        ) ?: StockUiState.Loading
     }.flowOn(Dispatchers.Default)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), StockUiState.Loading)
 
@@ -49,10 +48,8 @@ class StockViewModel @Inject constructor(
         }
 
         loadJob = viewModelScope.launch {
-            _loadState.value = StockUiState.Loading
-            stockRepository.getStocks()
-                .onSuccess { _loadState.value = StockUiState.Success(it) }
-                .onFailure { _loadState.value = StockUiState.Error(it) }
+            _loadResult.value = null
+            _loadResult.value = stockRepository.getStocks()
         }
     }
 
@@ -63,6 +60,7 @@ class StockViewModel @Inject constructor(
 
 sealed interface StockUiState {
     data object Loading : StockUiState
-    data class Success(val stocks: List<Stock>) : StockUiState
+    /** [stocks] 已依 [sort] 排序，兩者一起送出，畫面才能判斷列表是否因排序變更。 */
+    data class Success(val stocks: List<Stock>, val sort: StockSort) : StockUiState
     data class Error(val throwable: Throwable) : StockUiState
 }

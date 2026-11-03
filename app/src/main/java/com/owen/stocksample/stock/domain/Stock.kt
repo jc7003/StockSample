@@ -29,4 +29,13 @@ data class Stock(
     val dividendYield: BigDecimal?,
     /** 股價淨值比 */
     val pbRatio: BigDecimal?,
-)
+) {
+
+    /** 收盤價與月平均價的差，任一為 null 時為 null */
+    val diffFromAverage: BigDecimal?
+        get() = if (closingPrice != null && monthlyAveragePrice != null) {
+            closingPrice - monthlyAveragePrice
+        } else {
+            null
+        }
+}

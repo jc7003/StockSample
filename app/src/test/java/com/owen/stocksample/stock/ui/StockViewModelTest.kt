@@ -57,7 +57,9 @@ class StockViewModelTest {
 
         assertEquals(1, repository.callCount)
         assertEquals(StockSort.CODE_DESCENDING, viewModel.sort.value)
-        assertEquals(listOf("2330", "2317", "1101"), (state as StockUiState.Success).stocks.map { it.code })
+        state as StockUiState.Success
+        assertEquals(StockSort.CODE_DESCENDING, state.sort)
+        assertEquals(listOf("2330", "2317", "1101"), state.stocks.map { it.code })
     }
 
     @Test
@@ -79,13 +81,29 @@ class StockViewModelTest {
 
         viewModel.updateSort(StockSort.CODE_ASCENDING)
         val state = viewModel.uiState.first {
-            it is StockUiState.Success && it.stocks.first().code == "1101"
-        }
+            it is StockUiState.Success && it.sort == StockSort.CODE_ASCENDING
+        } as StockUiState.Success
 
         assertEquals(StockSort.CODE_ASCENDING, viewModel.sort.value)
-        assertEquals(listOf("1101", "2317", "2330"), (state as StockUiState.Success).stocks.map { it.code })
+        // 列表與排序方式一起送出，不會出現排序已變更但列表仍是舊順序的狀態
+        assertEquals(listOf("1101", "2317", "2330"), state.stocks.map { it.code })
         // 切換排序不重新呼叫 API
         assertEquals(1, repository.callCount)
+    }
+
+    @Test
+    fun updateSort_whileLoading_successUsesNewSort() = runTest {
+        val gate = CompletableDeferred<Unit>()
+        val repository = FakeStockRepository(Result.success(listOf("1101", "2330").map(::stock)), gate)
+        val viewModel = StockViewModel(repository)
+
+        // 載入中切換排序，載入完成時應直接套用新的排序
+        viewModel.updateSort(StockSort.CODE_ASCENDING)
+        gate.complete(Unit)
+        val state = viewModel.awaitLoaded() as StockUiState.Success
+
+        assertEquals(StockSort.CODE_ASCENDING, state.sort)
+        assertEquals(listOf("1101", "2330"), state.stocks.map { it.code })
     }
 
     @Test

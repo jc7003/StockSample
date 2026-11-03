@@ -13,11 +13,10 @@ object ColorUtils {
     /** 依漲跌價差取得文字顏色：null 或 0 用 textColorPrimary，大於 0 用 upColor，小於 0 用 downColor。 */
     @ColorInt
     fun getChangeColor(context: Context, change: BigDecimal?): Int {
-        // 用 signum 判斷正負，BigDecimal 的 == 會比較小數位數，0.00 不等於 0
-        val colorAttr = when (change?.signum() ?: 0) {
-            0 -> android.R.attr.textColorPrimary
-            1 -> R.attr.upColor
-            else -> R.attr.downColor
+        val colorAttr = when (PriceTrend.of(change)) {
+            PriceTrend.FLAT -> android.R.attr.textColorPrimary
+            PriceTrend.UP -> R.attr.upColor
+            PriceTrend.DOWN -> R.attr.downColor
         }
         return MaterialColors.getColor(context, colorAttr, TAG)
     }
